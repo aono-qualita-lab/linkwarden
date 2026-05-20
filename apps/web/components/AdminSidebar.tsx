@@ -20,15 +20,14 @@ export default function AdminSidebar({ className }: { className?: string }) {
 
   return (
     <div
-      className={`bg-base-200 h-screen w-80 overflow-y-auto border-solid border border-base-200 border-r-neutral-content p-2 z-20 flex flex-col gap-5 justify-between ${
-        className || ""
-      }`}
+      className={`bg-base-200 h-screen w-80 overflow-y-auto border-solid border border-base-200 border-r-neutral-content p-2 z-20 flex flex-col gap-5 justify-between ${className || ""
+        }`}
     >
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between mb-4">
           {user?.theme === "light" ? (
             <Image
-              src={"/linkwarden_light.png"}
+              src={"/link/linkwarden_light.png"}
               width={640}
               height={136}
               alt="Linkwarden"
@@ -38,7 +37,7 @@ export default function AdminSidebar({ className }: { className?: string }) {
             />
           ) : (
             <Image
-              src={"/linkwarden_dark.png"}
+              src={"/link/linkwarden_dark.png"}
               width={640}
               height={136}
               alt="Linkwarden"
@@ -50,11 +49,10 @@ export default function AdminSidebar({ className }: { className?: string }) {
         </div>
         <Link href="/admin/user-administration">
           <div
-            className={`${
-              active === "/admin/user-administration"
+            className={`${active === "/admin/user-administration"
                 ? "bg-primary/20"
                 : "hover:bg-neutral/20"
-            } duration-200 cursor-pointer flex items-center gap-2 rounded-lg px-3 py-1`}
+              } duration-200 cursor-pointer flex items-center gap-2 rounded-lg px-3 py-1`}
           >
             <i className="bi-people text-primary text-xl drop-shadow"></i>
             <p className="truncate w-full font-semibold text-sm">
@@ -65,11 +63,10 @@ export default function AdminSidebar({ className }: { className?: string }) {
 
         <Link href="/admin/background-jobs">
           <div
-            className={`${
-              active === "/admin/background-jobs"
+            className={`${active === "/admin/background-jobs"
                 ? "bg-primary/20"
                 : "hover:bg-neutral/20"
-            } duration-200 cursor-pointer flex items-center gap-2 rounded-lg px-3 py-1`}
+              } duration-200 cursor-pointer flex items-center gap-2 rounded-lg px-3 py-1`}
           >
             <i className="bi-gear-wide-connected text-primary text-xl drop-shadow"></i>
             <p className="truncate w-full font-semibold text-sm">

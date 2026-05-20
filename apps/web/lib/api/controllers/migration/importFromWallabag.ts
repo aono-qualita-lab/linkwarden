@@ -25,13 +25,66 @@ type WallabagBackup = {
   headers: Record<string, string>;
 }[];
 
+function extractItems(parsed: unknown): Record<string, unknown>[] {
+  // 1) Already an array
+  if (Array.isArray(parsed)) {
+    return parsed as Record<string, unknown>[];
+  }
+
+  if (parsed === null || typeof parsed !== "object") return [];
+
+  const obj = parsed as Record<string, unknown>;
+
+  // 2) HAL-JSON: { _embedded: { items: [...] } }
+  const embedded = obj._embedded;
+  if (embedded && typeof embedded === "object") {
+    const emb = embedded as Record<string, unknown>;
+    for (const key of ["items", "entries", "entry", "links"]) {
+      if (Array.isArray(emb[key])) {
+        return emb[key] as Record<string, unknown>[];
+      }
+    }
+  }
+
+  // 3) Top-level known keys
+  for (const key of ["items", "entries", "entry", "links", "data", "records", "results"]) {
+    if (Array.isArray(obj[key])) {
+      return obj[key] as Record<string, unknown>[];
+    }
+  }
+
+  // 4) Single entry object
+  if (typeof obj.id !== "undefined") {
+    return [obj];
+  }
+
+  // 5) Fallback: find any array where items have "id" or "url"
+  for (const value of Object.values(obj)) {
+    if (Array.isArray(value) && value.length > 0) {
+      if (typeof value[0] === "object" && value[0] !== null) {
+        const first = value[0] as Record<string, unknown>;
+        if (typeof first.id !== "undefined" || typeof first.url !== "undefined") {
+          return value as Record<string, unknown>[];
+        }
+      }
+    }
+  }
+
+  return [];
+}
+
 export default async function importFromWallabag(
   userId: number,
   rawData: string
 ) {
-  const data: WallabagBackup = JSON.parse(rawData);
+  const parsed: unknown = JSON.parse(rawData);
 
-  const backup = data.filter((e) => e.url);
+  const data = extractItems(parsed) as WallabagBackup;
+
+  // Filter out entries without a valid URL
+  const backup = data.filter(
+    (e) => e.url && e.url.trim().length > 0
+  );
 
   let totalImports = backup.length;
 
@@ -44,10 +97,35 @@ export default async function importFromWallabag(
     };
   }
 
+  // Normalize and validate URLs
+  const validLinks = backup.filter((link) => {
+    let urlStr = link.url?.trim();
+    if (!urlStr) return false;
+    // Prepend https:// if no protocol is present
+    if (!/^[a-zA-Z][a-zA-Z0-9+\-.]*:\/\//.test(urlStr)) {
+      urlStr = "https://" + urlStr;
+    }
+    try {
+      new URL(urlStr);
+      return true;
+    } catch {
+      return false;
+    }
+  });
+
+  if (validLinks.length === 0) {
+    return {
+      response: "No valid URLs found in the import file.",
+      status: 400,
+    };
+  }
+
+  let importCount = 0;
+
   await prisma
     .$transaction(
-      async () => {
-        const newCollection = await prisma.collection.create({
+      async (tx) => {
+        const newCollection = await tx.collection.create({
           data: {
             owner: {
               connect: {
@@ -65,16 +143,8 @@ export default async function importFromWallabag(
 
         createFolder({ filePath: `archives/${newCollection.id}` });
 
-        for (const link of backup) {
-          if (link.url) {
-            try {
-              new URL(link.url.trim());
-            } catch (err) {
-              continue;
-            }
-          }
-
-          await prisma.link.create({
+        for (const link of validLinks) {
+          await tx.link.create({
             data: {
               pinnedBy: link.is_starred
                 ? { connect: { id: userId } }
@@ -96,31 +166,35 @@ export default async function importFromWallabag(
               tags:
                 link.tags && link.tags[0]
                   ? {
-                      connectOrCreate: link.tags.map((tag) => ({
-                        where: {
-                          name_ownerId: {
-                            name: tag?.trim().slice(0, 49),
-                            ownerId: userId,
-                          },
-                        },
-                        create: {
+                    connectOrCreate: link.tags.map((tag) => ({
+                      where: {
+                        name_ownerId: {
                           name: tag?.trim().slice(0, 49),
-                          owner: {
-                            connect: {
-                              id: userId,
-                            },
+                          ownerId: userId,
+                        },
+                      },
+                      create: {
+                        name: tag?.trim().slice(0, 49),
+                        owner: {
+                          connect: {
+                            id: userId,
                           },
                         },
-                      })),
-                    }
+                      },
+                    })),
+                  }
                   : undefined,
             },
           });
+
+          importCount++;
         }
       },
       { timeout: 30000 }
-    )
-    .catch((err) => console.log(err));
+    );
 
-  return { response: "Success.", status: 200 };
+  return {
+    response: `Successfully imported ${importCount} links.`,
+    status: 200,
+  };
 }

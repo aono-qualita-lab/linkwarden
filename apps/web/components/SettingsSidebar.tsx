@@ -20,15 +20,14 @@ export default function SettingsSidebar({ className }: { className?: string }) {
 
   return (
     <div
-      className={`bg-base-200 h-screen w-80 overflow-y-auto border-solid border border-base-200 border-r-neutral-content p-2 z-20 flex flex-col gap-5 justify-between ${
-        className || ""
-      }`}
+      className={`bg-base-200 h-screen w-80 overflow-y-auto border-solid border border-base-200 border-r-neutral-content p-2 z-20 flex flex-col gap-5 justify-between ${className || ""
+        }`}
     >
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between mb-3">
           {user?.theme === "light" ? (
             <Image
-              src={"/linkwarden_light.png"}
+              src={"/link/linkwarden_light.png"}
               width={640}
               height={136}
               alt="Linkwarden"
@@ -38,7 +37,7 @@ export default function SettingsSidebar({ className }: { className?: string }) {
             />
           ) : (
             <Image
-              src={"/linkwarden_dark.png"}
+              src={"/link/linkwarden_dark.png"}
               width={640}
               height={136}
               alt="Linkwarden"
@@ -50,11 +49,10 @@ export default function SettingsSidebar({ className }: { className?: string }) {
         </div>
         <Link href="/settings/account">
           <div
-            className={`${
-              active === "/settings/account"
+            className={`${active === "/settings/account"
                 ? "bg-primary/20"
                 : "hover:bg-neutral/20"
-            } duration-200 cursor-pointer flex items-center gap-2 rounded-lg px-3 py-1`}
+              } duration-200 cursor-pointer flex items-center gap-2 rounded-lg px-3 py-1`}
           >
             <i className="bi-person text-primary text-xl drop-shadow"></i>
             <p className="truncate w-full font-semibold text-sm">
@@ -65,11 +63,10 @@ export default function SettingsSidebar({ className }: { className?: string }) {
 
         <Link href="/settings/preference">
           <div
-            className={`${
-              active === "/settings/preference"
+            className={`${active === "/settings/preference"
                 ? "bg-primary/20"
                 : "hover:bg-neutral/20"
-            } duration-200 cursor-pointer flex items-center gap-2 rounded-lg px-3 py-1`}
+              } duration-200 cursor-pointer flex items-center gap-2 rounded-lg px-3 py-1`}
           >
             <i className="bi-sliders text-primary text-xl drop-shadow"></i>
             <p className="truncate w-full font-semibold text-sm">
@@ -80,11 +77,10 @@ export default function SettingsSidebar({ className }: { className?: string }) {
 
         <Link href="/settings/rss-subscriptions">
           <div
-            className={`${
-              active === "/settings/rss-subscriptions"
+            className={`${active === "/settings/rss-subscriptions"
                 ? "bg-primary/20"
                 : "hover:bg-neutral/20"
-            } duration-200 cursor-pointer flex items-center gap-2 rounded-lg px-3 py-1`}
+              } duration-200 cursor-pointer flex items-center gap-2 rounded-lg px-3 py-1`}
           >
             <i className="bi-rss text-primary text-xl drop-shadow"></i>
             <p className="truncate w-full font-semibold text-sm">
@@ -95,11 +91,10 @@ export default function SettingsSidebar({ className }: { className?: string }) {
 
         <Link href="/settings/access-tokens">
           <div
-            className={`${
-              active === "/settings/access-tokens"
+            className={`${active === "/settings/access-tokens"
                 ? "bg-primary/20"
                 : "hover:bg-neutral/20"
-            } duration-200 cursor-pointer flex items-center gap-2 rounded-lg px-3 py-1`}
+              } duration-200 cursor-pointer flex items-center gap-2 rounded-lg px-3 py-1`}
           >
             <i className="bi-key text-primary text-xl drop-shadow"></i>
             <p className="truncate w-full font-semibold text-sm">
@@ -110,11 +105,10 @@ export default function SettingsSidebar({ className }: { className?: string }) {
 
         <Link href="/settings/password">
           <div
-            className={`${
-              active === "/settings/password"
+            className={`${active === "/settings/password"
                 ? "bg-primary/20"
                 : "hover:bg-neutral/20"
-            } duration-200 cursor-pointer flex items-center gap-2 rounded-lg px-3 py-1`}
+              } duration-200 cursor-pointer flex items-center gap-2 rounded-lg px-3 py-1`}
           >
             <i className="bi-lock text-primary text-xl drop-shadow"></i>
             <p className="truncate w-full font-semibold text-sm">
@@ -126,11 +120,10 @@ export default function SettingsSidebar({ className }: { className?: string }) {
         {process.env.NEXT_PUBLIC_STRIPE && !user?.parentSubscriptionId && (
           <Link href="/settings/billing">
             <div
-              className={`${
-                active === "/settings/billing"
+              className={`${active === "/settings/billing"
                   ? "bg-primary/20"
                   : "hover:bg-neutral/20"
-              } duration-200 cursor-pointer flex items-center gap-2 rounded-lg px-3 py-1`}
+                } duration-200 cursor-pointer flex items-center gap-2 rounded-lg px-3 py-1`}
             >
               <i className="bi-credit-card text-primary text-xl drop-shadow"></i>
               <p className="truncate w-full font-semibold text-sm">

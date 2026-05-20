@@ -7,7 +7,6 @@ import React, { useState, FormEvent } from "react";
 import { toast } from "react-hot-toast";
 import { getLogins } from "./api/v1/logins";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import InstallApp from "@/components/InstallApp";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { i18n } from "next-i18next.config";
 import { getToken } from "next-auth/jwt";
@@ -263,7 +262,7 @@ export default function Login({
   }
 
   return (
-    <CenteredForm text={t("sign_in_to_your_account")}>
+    <CenteredForm>
       <form onSubmit={loginUser}>
         <div
           className="p-4 mx-auto flex flex-col gap-3 justify-between max-w-[30rem] min-w-80 w-full bg-slate-50 dark:bg-neutral-800 rounded-xl shadow-md border border-sky-100 dark:border-neutral-700"
@@ -271,10 +270,8 @@ export default function Login({
         >
           {displayLoginCredential()}
           {displayLoginExternalButton()}
-          {displayRegistration()}
         </div>
       </form>
-      <InstallApp />
     </CenteredForm>
   );
 }

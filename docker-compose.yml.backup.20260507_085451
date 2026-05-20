@@ -13,7 +13,7 @@ services:
     # build: . # uncomment to build from source
     image: ghcr.io/linkwarden/linkwarden:latest # comment to build from source
     ports:
-      - 3001:3000
+      - 3000:3000
     volumes:
       - ./data:/data/data
     depends_on:

@@ -121,10 +121,10 @@ export default function Navbar({
           <ToggleDarkMode hideInMobile />
 
           <DropdownMenu>
-            <DropdownMenuTrigger className="hidden sm:inline-grid">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenuTrigger asChild className="hidden sm:inline-grid">
                     <Button
                       variant="accent"
                       size="sm"
@@ -137,13 +137,13 @@ export default function Navbar({
                         <i className="bi-caret-down-fill text-xs absolute top-[0.6rem] right-[0.4rem] pointer-events-none" />
                       </span>
                     </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{t("create_new")}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </DropdownMenuTrigger>
+                  </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{t("create_new")}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
             <DropdownMenuContent align="end">
               <DropdownMenuItem onSelect={() => setNewLinkModal(true)}>

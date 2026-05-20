@@ -28,7 +28,7 @@ export default function ProfileDropdown() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="rounded-full p-1">
           <ProfilePhoto
             src={user?.image ? user?.image : undefined}

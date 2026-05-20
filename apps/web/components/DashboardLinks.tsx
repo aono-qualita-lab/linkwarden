@@ -107,6 +107,8 @@ export function Card({ link, editMode, dashboardType }: Props) {
 
   const [linkModal, setLinkModal] = useState(false);
 
+  const pollingCountRef = useRef(0);
+
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null;
 
@@ -116,10 +118,20 @@ export function Card({ link, editMode, dashboardType }: Props) {
       link.preview !== "unavailable"
     ) {
       interval = setInterval(async () => {
+        pollingCountRef.current += 1;
+
+        if (pollingCountRef.current >= 12) {
+          if (interval) {
+            clearInterval(interval);
+            interval = null;
+          }
+          return;
+        }
+
         refetch().catch((error) => {
           console.error("Error refetching link:", error);
         });
-      }, 5000);
+      }, 30000);
     }
 
     return () => {

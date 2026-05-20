@@ -13,7 +13,7 @@
     "lint": "next lint",
     "e2e": "playwright test e2e",
     "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\"",
-    "postinstall": "playwright install --with-deps chromium"
+    "postinstall": "echo 'Skipping playwright install (OS not supported)'"
   },
   "dependencies": {
     "@atlaskit/tree": "^8.8.7",

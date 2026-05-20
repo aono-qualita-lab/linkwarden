@@ -103,7 +103,7 @@ export default function Sidebar({
         <div className="flex items-center justify-between mb-3">
           {sidebarIsCollapsed ? (
             <Image
-              src={"/icon.png"}
+              src={"/link/icon.png"}
               width={640}
               height={136}
               alt="Linkwarden Icon"
@@ -113,7 +113,7 @@ export default function Sidebar({
             />
           ) : user?.theme === "light" ? (
             <Image
-              src={"/linkwarden_light.png"}
+              src={"/link/linkwarden_light.png"}
               width={640}
               height={136}
               alt="Linkwarden"
@@ -123,7 +123,7 @@ export default function Sidebar({
             />
           ) : (
             <Image
-              src={"/linkwarden_dark.png"}
+              src={"/link/linkwarden_dark.png"}
               width={640}
               height={136}
               alt="Linkwarden"
@@ -229,9 +229,8 @@ export default function Sidebar({
             >
               <p className="text-sm">{t("collections")}</p>
               <i
-                className={`bi-chevron-down ${
-                  collectionDisclosure ? "rotate-reverse" : "rotate"
-                }`}
+                className={`bi-chevron-down ${collectionDisclosure ? "rotate-reverse" : "rotate"
+                  }`}
               ></i>
             </Disclosure.Button>
             <Transition
@@ -256,9 +255,8 @@ export default function Sidebar({
             >
               <p className="text-sm">{t("tags")}</p>
               <i
-                className={`bi-chevron-down  ${
-                  tagDisclosure ? "rotate-reverse" : "rotate"
-                }`}
+                className={`bi-chevron-down  ${tagDisclosure ? "rotate-reverse" : "rotate"
+                  }`}
               ></i>
             </Disclosure.Button>
             <Transition

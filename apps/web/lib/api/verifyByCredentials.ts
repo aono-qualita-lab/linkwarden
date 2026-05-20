@@ -19,18 +19,18 @@ export default async function verifyByCredentials({
   const user = await prisma.user.findFirst({
     where: emailEnabled
       ? {
-          OR: [
-            {
-              username: username.toLowerCase(),
-            },
-            {
-              email: username?.toLowerCase(),
-            },
-          ],
-        }
+        OR: [
+          {
+            username: username.toLowerCase(),
+          },
+          {
+            email: username?.toLowerCase(),
+          },
+        ],
+      }
       : {
-          username: username.toLowerCase(),
-        },
+        username: username.toLowerCase(),
+      },
     include: {
       subscriptions: true,
       parentSubscription: true,
@@ -38,6 +38,12 @@ export default async function verifyByCredentials({
   });
 
   if (!user) {
+    return null;
+  }
+
+  // Restrict access to only the allowed username
+  const allowedUsername = process.env.ALLOWED_USERNAME || "hotelmoscow";
+  if (user.username !== allowedUsername) {
     return null;
   }
 

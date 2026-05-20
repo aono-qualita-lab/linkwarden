@@ -13,7 +13,12 @@ async function init() {
 
   console.log("\x1b[34m%s\x1b[0m", "Initializing the worker...");
   startRSSPolling();
-  linkProcessing(workerIntervalInSeconds);
+
+  // Run linkProcessing in a separate context so its failure doesn't crash the worker
+  linkProcessing(workerIntervalInSeconds).catch((err) => {
+    console.error("\x1b[31m%s\x1b[0m", "Link processing failed (will keep retrying):", err?.message);
+  });
+
   autoTagPreservedLinks(workerIntervalInSeconds);
   startIndexing(workerIntervalInSeconds);
   trialEndEmailWorker();

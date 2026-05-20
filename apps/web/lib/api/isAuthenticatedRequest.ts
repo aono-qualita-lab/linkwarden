@@ -45,5 +45,11 @@ export default async function isAuthenticatedRequest({ req }: Props) {
     return null;
   }
 
+  // Restrict access to only the allowed username
+  const allowedUsername = process.env.ALLOWED_USERNAME || "hotelmoscow";
+  if (findUser && findUser.username !== allowedUsername) {
+    return null;
+  }
+
   return findUser;
 }

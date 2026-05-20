@@ -150,16 +150,7 @@ export default function Register({
   }
 
   return (
-    <CenteredForm
-      text={
-        process.env.NEXT_PUBLIC_STRIPE
-          ? t("trial_offer_desc", {
-              count: Number(process.env.NEXT_PUBLIC_TRIAL_PERIOD_DAYS || 14),
-            })
-          : t("register_desc")
-      }
-      data-testid="registration-form"
-    >
+    <CenteredForm data-testid="registration-form">
       {config?.DISABLE_REGISTRATION ? (
         <div className="p-4 flex flex-col gap-3 justify-between max-w-[30rem] min-w-80 w-full bg-base-200 rounded-xl shadow-md border border-neutral-content">
           <p>{t("registration_disabled")}</p>

@@ -57,6 +57,15 @@ export default async function verifyUser({
     return null;
   }
 
+  // Restrict access to only the allowed username
+  const allowedUsername = process.env.ALLOWED_USERNAME || "hotelmoscow";
+  if (user.username !== allowedUsername) {
+    res.status(403).json({
+      response: "このサービスは特定のアカウントのみ利用可能です。",
+    });
+    return null;
+  }
+
   if (STRIPE_SECRET_KEY) {
     const subscribedUser = await verifySubscription(user);
 

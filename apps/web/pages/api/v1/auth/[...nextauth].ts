@@ -99,23 +99,29 @@ if (process.env.NEXT_PUBLIC_CREDENTIALS_ENABLED !== "false") {
         const user = await prisma.user.findFirst({
           where: emailEnabled
             ? {
-                OR: [
-                  {
-                    username: username.toLowerCase(),
-                  },
-                  {
-                    email: username?.toLowerCase(),
-                  },
-                ],
-              }
+              OR: [
+                {
+                  username: username.toLowerCase(),
+                },
+                {
+                  email: username?.toLowerCase(),
+                },
+              ],
+            }
             : {
-                username: username.toLowerCase(),
-              },
+              username: username.toLowerCase(),
+            },
         });
 
         if (!user) throw Error("Invalid credentials.");
         else if (!user?.emailVerified && emailEnabled) {
           throw Error("Email not verified.");
+        }
+
+        // Restrict access to only the allowed usernames (comma-separated)
+        const allowedUsernames = (process.env.ALLOWED_USERNAME || "hotelmoscow").split(",").map(s => s.trim());
+        if (!allowedUsernames.includes(user.username || "")) {
+          throw Error("このサービスは特定のアカウントのみ利用可能です。");
         }
 
         let passwordMatches: boolean = false;
@@ -125,7 +131,7 @@ if (process.env.NEXT_PUBLIC_CREDENTIALS_ENABLED !== "false") {
         }
 
         if (passwordMatches && user?.password) {
-          return { id: user?.id };
+          return { id: user?.id, email: user.email };
         } else throw Error("Invalid credentials.");
       },
     })
@@ -690,17 +696,14 @@ if (process.env.NEXT_PUBLIC_GITLAB_ENABLED === "true") {
         timeout: 10000,
       },
       authorization: {
-        url: `${
-          process.env.GITLAB_AUTH_URL || "https://gitlab.com"
-        }/oauth/authorize`,
+        url: `${process.env.GITLAB_AUTH_URL || "https://gitlab.com"
+          }/oauth/authorize`,
         params: { scope: "read_user" },
       },
-      token: `${
-        process.env.GITLAB_AUTH_URL || "https://gitlab.com"
-      }/oauth/token`,
-      userinfo: `${
-        process.env.GITLAB_AUTH_URL || "https://gitlab.com"
-      }/api/v4/user`,
+      token: `${process.env.GITLAB_AUTH_URL || "https://gitlab.com"
+        }/oauth/token`,
+      userinfo: `${process.env.GITLAB_AUTH_URL || "https://gitlab.com"
+        }/api/v4/user`,
     })
   );
 
@@ -1324,6 +1327,12 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
     },
     callbacks: {
       async signIn({ user, account, profile, email, credentials }) {
+        // Restrict access to only the allowed usernames (comma-separated)
+        const allowedUsernames = (process.env.ALLOWED_USERNAME || "hotelmoscow").split(",").map(s => s.trim());
+        if (user.username && !allowedUsernames.includes(user.username)) {
+          return false;
+        }
+
         if (!(user as User).emailVerified && !email?.verificationRequest) {
           const parentSubscriptionId = (user as User).parentSubscriptionId;
 
@@ -1352,7 +1361,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
               STRIPE_SECRET_KEY &&
               parentSubscription?.quantity &&
               verifiedChildUsersCount + 2 > // add current user and the admin
-                parentSubscription.quantity
+              parentSubscription.quantity
             ) {
               // Add seat if the user count exceeds the subscription limit
               await updateSeats(

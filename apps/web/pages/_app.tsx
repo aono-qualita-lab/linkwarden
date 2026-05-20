@@ -50,7 +50,7 @@ function App({ Component, pageProps }: AppPropsWithLayout) {
       <SessionProvider
         session={pageProps.session}
         refetchOnWindowFocus={false}
-        basePath="/api/v1/auth"
+        basePath="/link/api/v1/auth"
       >
         <Head>
           <title>Linkwarden</title>
@@ -59,21 +59,21 @@ function App({ Component, pageProps }: AppPropsWithLayout) {
           <link
             rel="apple-touch-icon"
             sizes="180x180"
-            href="/apple-touch-icon.png"
+            href="/link/apple-touch-icon.png"
           />
           <link
             rel="icon"
             type="image/png"
             sizes="32x32"
-            href="/favicon-32x32.png"
+            href="/link/favicon-32x32.png"
           />
           <link
             rel="icon"
             type="image/png"
             sizes="16x16"
-            href="/favicon-16x16.png"
+            href="/link/favicon-16x16.png"
           />
-          <link rel="manifest" href="/site.webmanifest" />
+          <link rel="manifest" href="/link/site.webmanifest" />
         </Head>
         <AuthRedirect>
           {/* <GetData> */}
