@@ -51,8 +51,63 @@ export default async function searchLinks({
   const pinnedCondition =
     query.pinnedOnly && userId ? { pinnedBy: { some: { id: userId } } } : {};
 
+  // 検索トークンのパースを最序盤で実行
+  const tokens = query.searchQueryString ? parseSearchTokens(query.searchQueryString) : [];
+
+  // 「url:http...」の完全一致検索のみが指定されている場合の高速ショートカット
+  if (tokens.length === 1 && tokens[0].field === "url" && !tokens[0].isNegative) {
+    const targetUrl = tokens[0].value;
+    const links = await prisma.link.findMany({
+      take: paginationTakeCount,
+      where: {
+        url: targetUrl,
+        AND: [
+          ...(userId
+            ? [
+                {
+                  collection: {
+                    OR: [
+                      { ownerId: userId },
+                      {
+                        members: {
+                          some: { userId },
+                        },
+                      },
+                    ],
+                  },
+                },
+              ]
+            : []),
+          ...collectionCondition,
+        ],
+      },
+      omit: {
+        textContent: true,
+      },
+      include: {
+        tags: true,
+        collection: true,
+        pinnedBy: userId
+          ? {
+              where: { id: userId },
+              select: { id: true },
+            }
+          : undefined,
+      },
+      orderBy: order,
+    });
+
+    return {
+      data: {
+        links,
+        nextCursor: null,
+      },
+      statusCode: 200,
+      success: true,
+      message: "Success",
+    };
+  }
   if (meiliClient && query.searchQueryString) {
-    const tokens = parseSearchTokens(query.searchQueryString);
     const meiliQuery = buildMeiliQuery(tokens);
 
     const meiliFilters = buildMeiliFilters({
