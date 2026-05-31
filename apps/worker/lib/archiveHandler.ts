@@ -83,28 +83,14 @@ export default async function archiveHandler(
   createFolder({ filePath: `archives/${link.collectionId}` });
 
   const archivalTags = link.tags.filter(isArchivalTag);
-  const archivalSettings: ArchivalSettings =
-    archivalTags.length > 0
-      ? {
-          archiveAsScreenshot: archivalTags.some(
-            (tag) => tag.archiveAsScreenshot
-          ),
-          archiveAsMonolith: archivalTags.some((tag) => tag.archiveAsMonolith),
-          archiveAsPDF: archivalTags.some((tag) => tag.archiveAsPDF),
-          archiveAsReadable: archivalTags.some((tag) => tag.archiveAsReadable),
-          archiveAsWaybackMachine: archivalTags.some(
-            (tag) => tag.archiveAsWaybackMachine
-          ),
-          aiTag: archivalTags.some((tag) => tag.aiTag),
-        }
-      : {
-          archiveAsScreenshot: user.archiveAsScreenshot,
-          archiveAsMonolith: user.archiveAsMonolith,
-          archiveAsPDF: user.archiveAsPDF,
-          archiveAsReadable: user.archiveAsReadable,
-          archiveAsWaybackMachine: user.archiveAsWaybackMachine,
-          aiTag: user.aiTaggingMethod !== AiTaggingMethod.DISABLED,
-        };
+  const archivalSettings: ArchivalSettings = {
+    archiveAsScreenshot: false,
+    archiveAsMonolith: false,
+    archiveAsPDF: false,
+    archiveAsReadable: true,
+    archiveAsWaybackMachine: false,
+    aiTag: user.aiTaggingMethod !== AiTaggingMethod.DISABLED,
+  };
 
   try {
     await Promise.race([
