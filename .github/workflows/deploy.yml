@@ -1,23 +1,24 @@
-name: Deploy LINK to VPS
+name: Deploy LINK Application
 
 on:
   push:
     branches:
       - main
+      - master
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.0
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
+          username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
+          port: 22
           script: |
             cd /home/bob/www/shirokumaworks.jp/link
-            git pull origin main
+            git pull origin $(git rev-parse --abbrev-ref HEAD)
+            docker compose down
             docker compose up -d --build
