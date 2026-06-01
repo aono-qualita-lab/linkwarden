@@ -3,6 +3,8 @@ services:
     image: postgres:16-alpine
     env_file: .env
     restart: always
+    mem_limit: 512m
+    cpus: 0.25
     volumes:
       - ./pgdata:/var/lib/postgresql/data
   linkwarden:
@@ -10,6 +12,8 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
     restart: always
+    mem_limit: 1g
+    cpus: 0.5
     # build: . # uncomment to build from source
     image: ghcr.io/linkwarden/linkwarden:latest # comment to build from source
     ports:
@@ -18,11 +22,9 @@ services:
       - ./data:/data/data
     depends_on:
       - postgres
-      - meilisearch
-  meilisearch:
-    image: getmeili/meilisearch:v1.12.8
-    restart: always
-    env_file:
-      - .env
-    volumes:
-      - ./meili_data:/meili_data
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3000/api/v1/health', (r) => { if (r.statusCode === 200) process.exit(0); else process.exit(1); })\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s

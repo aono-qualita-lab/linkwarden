@@ -11,6 +11,13 @@ const BROWSER_MAX_AGE_MS = 30 * 60 * 1000; // 30 minutes
 export async function linkProcessing(interval = 10) {
   console.log("\x1b[34m%s\x1b[0m", "Starting link processing...");
 
+  if (process.env.DISABLE_PRESERVATION === "true") {
+    console.log("\x1b[34m%s\x1b[0m", "Preservation is globally disabled. Skipping browser launch and loop.");
+    while (true) {
+      await delay(3600 * 1000); // 1時間待機するだけで何もしない
+    }
+  }
+
   let browser = await launchBrowser();
   let browserStartTs = Date.now();
 
